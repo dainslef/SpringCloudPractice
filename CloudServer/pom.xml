@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>SpringCloudPractice</artifactId>
+        <groupId>dainslef</groupId>
+        <version>0.1</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>CloudServer</artifactId>
+
+    <properties>
+        <spring-boot-version>2.0.0.RELEASE</spring-boot-version>
+    </properties>
+
+    <dependencies>
+
+        <!-- Eureka Server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+            <version>${spring-boot-version}</version>
+            <exclusions>
+                <!-- exclude the old version servlet-api -->
+                <exclusion>
+                    <artifactId>servlet-api</artifactId>
+                    <groupId>javax.servlet</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-monitor</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+
+        <!-- Spring Cloud Config Server needs Spring Cloud Stream, default Spring Cloud Stream implment is RabbitMQ -->
+        <!-- the implment of Spring Cloud Stream can also use Kafka -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

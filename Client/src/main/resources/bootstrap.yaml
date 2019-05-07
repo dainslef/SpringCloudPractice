@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      profile: dev
+      uri: http://localhost:19999/

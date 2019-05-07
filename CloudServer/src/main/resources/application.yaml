@@ -1,0 +1,22 @@
+server:
+  port: 19999
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  application:
+    name: spring-cloud-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/
+    stream:
+      kafka:
+        binder:
+          brokers: 172.16.1.126,172.16.1.129
