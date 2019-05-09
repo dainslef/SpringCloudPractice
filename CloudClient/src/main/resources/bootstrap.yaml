@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: spring-cloud-client
+  profiles:
+    active: dev
+  cloud:
+    config:
+      # when use Eureka, you can use service-id to find Spring Cloud Server, instead of hard code in config file
+      discovery:
+        enabled: true
+        service-id: spring-cloud-server
+      # uri: http://localhost:19999/
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19999/eureka/

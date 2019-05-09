@@ -47,7 +47,7 @@
         <!-- the implment of Spring Cloud Stream can also use Kafka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+            <artifactId>spring-cloud-starter-bus-kafka</artifactId>
             <version>${spring-boot-version}</version>
         </dependency>
 

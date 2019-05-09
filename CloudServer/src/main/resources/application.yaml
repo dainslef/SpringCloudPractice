@@ -3,8 +3,8 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:19999/eureka/
 
 spring:
   application:
@@ -16,6 +16,7 @@ spring:
       server:
         native:
           search-locations: classpath:/
+        prefix: /config
     stream:
       kafka:
         binder:

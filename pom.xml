@@ -14,7 +14,7 @@
     </properties>
 
     <modules>
-        <module>Client</module>
+        <module>CloudClient</module>
         <module>CloudServer</module>
     </modules>
 

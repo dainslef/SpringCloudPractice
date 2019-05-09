@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class CloudServer {
 
     @Autowired
-    lateinit var client: EurekaClient
+    private lateinit var client: EurekaClient
 
     @GetMapping("/client-info/{serviceId}")
     fun clientInfo(@PathVariable serviceId: String) = client.getApplications(serviceId)

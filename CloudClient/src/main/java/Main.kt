@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @EnableEurekaClient
 @RestController
 @RefreshScope
-class ClientConfig {
+class CloudClient {
 
     @Value("\${test.name}")
     lateinit var name: String
@@ -23,5 +23,5 @@ class ClientConfig {
 }
 
 fun main(args: Array<String>) {
-    SpringApplication.run(ClientConfig::class.java, *args)
+    SpringApplication.run(CloudClient::class.java, *args)
 }
