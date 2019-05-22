@@ -1,11 +1,11 @@
 test:
   config: "test-config..."
-  name: "test-name-dev"
+  name: "test-name-test"
   name1: "test-name-1"
   name2: "test-name-2"
 
 server:
-  port: 20000
+  port: 20001
 
 spring:
   cloud:

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dainslef</groupId>
-    <artifactId>SpringCloudPractice</artifactId>
+    <artifactId>spring-cloud-practice</artifactId>
     <packaging>pom</packaging>
     <version>0.1</version>
 
@@ -14,6 +14,7 @@
     </properties>
 
     <modules>
+        <module>CloudBase</module>
         <module>CloudClient</module>
         <module>CloudServer</module>
     </modules>
@@ -51,6 +52,12 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
+        <!-- Spring Session -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+
         <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,11 +65,17 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Session need lettuce to save session data in redis -->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>5.1.4.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-
             <!-- compiler plygin for Kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -96,15 +109,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
-            <!-- package plugin for Spring project, build all dependencies into one jar -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
         </plugins>
     </build>
-
 
 </project>

@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>SpringCloudPractice</artifactId>
+        <artifactId>spring-cloud-practice</artifactId>
         <groupId>dainslef</groupId>
         <version>0.1</version>
     </parent>
@@ -14,9 +14,16 @@
         <spring-boot-version>2.0.0.RELEASE</spring-boot-version>
     </properties>
 
-    <artifactId>CloudClient</artifactId>
+    <artifactId>cloud-client</artifactId>
 
     <dependencies>
+
+        <!-- Base Module -->
+        <dependency>
+            <artifactId>cloud-base</artifactId>
+            <groupId>dainslef</groupId>
+            <version>0.1</version>
+        </dependency>
 
         <!-- Eureka Client -->
         <dependency>
@@ -38,5 +45,15 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- package plugin for Spring project, build all dependencies into one jar -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

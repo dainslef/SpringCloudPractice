@@ -3,19 +3,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>SpringCloudPractice</artifactId>
+        <artifactId>spring-cloud-practice</artifactId>
         <groupId>dainslef</groupId>
         <version>0.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>CloudServer</artifactId>
+    <artifactId>cloud-server</artifactId>
 
     <properties>
         <spring-boot-version>2.0.0.RELEASE</spring-boot-version>
     </properties>
 
     <dependencies>
+
+        <!-- Base Module -->
+        <dependency>
+            <artifactId>cloud-base</artifactId>
+            <groupId>dainslef</groupId>
+            <version>0.1</version>
+        </dependency>
 
         <!-- Eureka Server -->
         <dependency>
@@ -31,6 +38,14 @@
             </exclusions>
         </dependency>
 
+        <!-- Zuul -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+
+        <!-- Config Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
@@ -52,5 +67,15 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- package plugin for Spring project, build all dependencies into one jar -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
