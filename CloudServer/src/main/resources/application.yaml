@@ -1,5 +1,5 @@
 server:
-  port: 19999
+  port: 10000
 
 spring:
   application:
@@ -16,22 +16,30 @@ spring:
       kafka:
         binder:
           brokers: 172.16.1.126,172.16.1.129
+      bindings:
+        output:
+          destination: input
+        customOutChannel1:
+          destination: customInChannel1
+        customOutChannel2:
+          destination: customInChannel2
+          # content-type: application/json
+          # group: test
   redis:
     host: 172.16.1.130
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:19999/eureka/
-
 zuul:
-  sensitiveHeaders:
+  sensitiveHeaders: # keep all sensitive headers
   routes:
     spring-cloud-client:
       path: /spring-cloud-client/**
-      # sensitiveHeaders: Authorization
       # sensitiveHeaders: Cookie,Set-Cookie,Authorization
-      # sensitive-headers: Authorization
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:${server.port}/eureka/
+
 
 
 lj:

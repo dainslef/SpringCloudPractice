@@ -1,62 +1,85 @@
-package dainslef.cloud.client
+package dainslef
 
-import javax.servlet.http.HttpServletRequest
-
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import com.zaxxer.hikari.HikariDataSource
+import org.springframework.beans.factory.annotation.*
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.context.config.annotation.RefreshScope
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient
+import org.springframework.cloud.stream.annotation.EnableBinding
+import org.springframework.cloud.stream.annotation.StreamListener
+import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.core.env.Environment
 import org.springframework.core.env.get
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
 
-import dainslef.cloud.base.Logger
+fun main(args: Array<String>) {
+    SpringApplication.run(CloudClient::class.java, *args)
+}
 
 @SpringBootApplication
-@EnableEurekaClient
+class CloudClient
+
 @RestController
 @RefreshScope
-class CloudClient : Logger {
+class ConfigRefreshController : Logger {
 
     @Value("\${test.config}")
-    lateinit var config: String
+    private lateinit var config: String
 
     @Autowired
-    lateinit var environment: Environment
+    private lateinit var environment: Environment
 
     @GetMapping("/config")
-    fun testAtValue() = config
+    fun testValue() = config
 
     @GetMapping("/get-config/{configPath}")
     fun testConfig(@PathVariable configPath: String, request: HttpServletRequest) =
-        ("Session name: ${request.getSession(false).getAttribute("name")}, " +
-                "Config URL: $configPath, Config Value: ${environment[configPath]}").apply {
-            logger.info(this)
-        }
+            request.getSession(false)?.getAttribute("name")
+                    .run { "Session name: $this, Config URL: $configPath, Config Value: ${environment[configPath]}" }
+                    .apply { logger.info(this) }
+
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
+
+    @GetMapping("/connection")
+    fun testConnection() = (jdbcTemplate.dataSource as? HikariDataSource)?.run {
+        "Connection url: $jdbcUrl"
+    }.apply { logger.info(this) } ?: "Unkown data source..."
+
+}
+
+@RestController
+class LoginController : Logger {
 
     @GetMapping("/login")
-    fun login(@RequestParam user: String, request: HttpServletRequest) =
-        request.session?.run {
-            setAttribute("name", user)
-            logger.info("User login: ${getAttribute("name")}")
-            "Login success, user: $user"
-        }
+    fun login(@RequestParam user: String, request: HttpServletRequest) = request.session?.run {
+        // create session
+        setAttribute("name", user)
+        maxInactiveInterval = 99999999
+        "Login success, user: ${getAttribute("name")}"
+    }.apply { logger.info(this) } ?: "Login failed"
 
     @GetMapping("/logout")
     fun logout(request: HttpServletRequest) = request.getSession(false)?.run {
         val user = getAttribute("name")
-        logger.info("User logout: $user")
-        invalidate()
+        invalidate() // invalidate session
         "Logout success, user: $user"
-    } ?: "Logout failed"
+    }.apply { logger.info(this) } ?: "Logout failed"
 
 }
 
-fun main(args: Array<String>) {
-    SpringApplication.run(CloudClient::class.java, *args)
+@EnableBinding(Sink::class, CustomSinkSource::class)
+class MessageHandlers : Logger {
+
+    @StreamListener(Sink.INPUT)
+    fun receiveMessage(message: String) = logger.info("Receive message from ${Sink.INPUT}: $message")
+
+    @StreamListener(CustomSinkSource.inChannel1)
+    fun receiveMessage1(message: CustomMessage) = logger.info("Receive message from ${CustomSinkSource.inChannel1}: $message")
+
+    @StreamListener(CustomSinkSource.inChannel2)
+    fun receiveMessage2(message: CustomMessage) = logger.info("Receive message from ${CustomSinkSource.inChannel2}: $message")
+
 }

@@ -1,9 +1,11 @@
 #server:
-#  port: 20000
+#  port: 20002
 #
 #spring:
 #  application:
 #    name: spring-cloud-client
+#  redis:
+#    host: 172.16.1.130
 #  cloud:
 #    stream:
 #      kafka:

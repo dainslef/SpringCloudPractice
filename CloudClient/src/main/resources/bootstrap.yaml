@@ -7,11 +7,12 @@ spring:
     config:
       # when use Eureka, you can use service-id to find Spring Cloud Server, instead of hard code in config file
       discovery:
-        enabled: true
+        enabled: true # in order to use local config, you can disable the config discovery
         service-id: spring-cloud-server
-      # uri: http://localhost:19999/
+      # uri: http://localhost:10000/
+      # enabled: false
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19999/eureka/
+      defaultZone: http://localhost:10000/eureka/,http://localhost:10001/eureka/

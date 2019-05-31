@@ -11,10 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cloud-server</artifactId>
 
-    <properties>
-        <spring-boot-version>2.0.0.RELEASE</spring-boot-version>
-    </properties>
-
     <dependencies>
 
         <!-- Base Module -->
@@ -28,42 +24,24 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-            <version>${spring-boot-version}</version>
-            <exclusions>
-                <!-- exclude the old version servlet-api -->
-                <exclusion>
-                    <artifactId>servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Zuul -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
-            <version>${spring-boot-version}</version>
         </dependency>
 
         <!-- Config Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
-            <version>${spring-boot-version}</version>
         </dependency>
 
+        <!-- Config Server Moniter -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-monitor</artifactId>
-            <version>${spring-boot-version}</version>
-        </dependency>
-
-        <!-- Spring Cloud Config Server needs Spring Cloud Stream, default Spring Cloud Stream implment is RabbitMQ -->
-        <!-- the implment of Spring Cloud Stream can also use Kafka -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-kafka</artifactId>
-            <version>${spring-boot-version}</version>
         </dependency>
 
     </dependencies>
