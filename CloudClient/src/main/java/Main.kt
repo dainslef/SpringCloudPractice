@@ -1,5 +1,8 @@
 package dainslef
 
+import java.util.concurrent.atomic.AtomicInteger
+import javax.servlet.http.HttpServletRequest
+
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.*
 import org.springframework.boot.SpringApplication
@@ -12,7 +15,6 @@ import org.springframework.core.env.Environment
 import org.springframework.core.env.get
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletRequest
 
 fun main(args: Array<String>) {
     SpringApplication.run(CloudClient::class.java, *args)
@@ -36,37 +38,45 @@ class ConfigRefreshController : Logger {
 
     @GetMapping("/get-config/{configPath}")
     fun testConfig(@PathVariable configPath: String, request: HttpServletRequest) =
-            request.getSession(false)?.getAttribute("name")
+            request.getSession(false)
+                    ?.getAttribute("name")
                     .run { "Session name: $this, Config URL: $configPath, Config Value: ${environment[configPath]}" }
-                    .apply { logger.info(this) }
+                    .apply(logger::info)
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
     @GetMapping("/connection")
-    fun testConnection() = (jdbcTemplate.dataSource as? HikariDataSource)?.run {
-        "Connection url: $jdbcUrl"
-    }.apply { logger.info(this) } ?: "Unkown data source..."
+    fun testConnection() = (jdbcTemplate.dataSource as? HikariDataSource)
+            ?.run { "Connection url: $jdbcUrl" }
+            .apply(logger::info) ?: "Unkown data source..."
 
 }
 
 @RestController
 class LoginController : Logger {
 
+    private val index = AtomicInteger()
+
+    @GetMapping("/count")
+    fun count(@RequestParam(required = false) value: Int?) =
+            value?.apply { index.set(this) } ?: index.get()
+
     @GetMapping("/login")
-    fun login(@RequestParam user: String, request: HttpServletRequest) = request.session?.run {
-        // create session
-        setAttribute("name", user)
-        maxInactiveInterval = 99999999
-        "Login success, user: ${getAttribute("name")}"
-    }.apply { logger.info(this) } ?: "Login failed"
+    fun login(@RequestParam user: String, request: HttpServletRequest) = request.session
+            ?.run {
+                setAttribute("name", user) // create session and set attribute
+                maxInactiveInterval = 99999999
+                "Login success, user: ${getAttribute("name")}"
+            }.apply(logger::info) ?: "Login failed"
 
     @GetMapping("/logout")
-    fun logout(request: HttpServletRequest) = request.getSession(false)?.run {
-        val user = getAttribute("name")
-        invalidate() // invalidate session
-        "Logout success, user: $user"
-    }.apply { logger.info(this) } ?: "Logout failed"
+    fun logout(request: HttpServletRequest) = request.getSession(false)
+            ?.run {
+                val user = getAttribute("name")
+                invalidate() // invalidate session
+                "Logout success, user: $user"
+            }.apply(logger::info) ?: "Logout failed"
 
 }
 

@@ -1,23 +1,6 @@
 server:
   port: 20000
 
-spring:
-  cloud:
-    stream:
-      kafka:
-        binder:
-          brokers: 172.16.1.126,172.16.1.129
-    bus:
-      id: ${vcap.application.name:${spring.application.name:application}}:${vcap.application.instance_index:${spring.profiles.active:${local.server.port:${server.port:0}}}}:${vcap.application.instance_id:${random.value}}
-  redis:
-    host: 172.16.1.130
-  datasource:
-    url: jdbc:mysql://172.16.0.134:3306/common_config_wh
-    user: gsmrlab
-    password: gsmrlab
-
-
-
 test:
   config: "test-config..."
   name: "test-name-dev"

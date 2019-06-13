@@ -38,7 +38,7 @@
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
 
-        <!-- Config Server Moniter -->
+        <!-- Config Server Monitor -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-monitor</artifactId>
