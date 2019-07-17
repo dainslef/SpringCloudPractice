@@ -1,8 +1,0 @@
-server:
-  port: 20000
-
-test:
-  config: "test-config..."
-  name: "test-name-dev"
-  name1: "test-name-1"
-  name2: "test-name-2"

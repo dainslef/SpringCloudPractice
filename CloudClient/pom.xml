@@ -38,6 +38,12 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
 
+<!--        &lt;!&ndash; Export actuator &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
+<!--        </dependency>-->
+
         <!-- MySQL JDBC Driver -->
         <dependency>
             <groupId>mysql</groupId>

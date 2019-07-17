@@ -1,47 +1,33 @@
 spring:
-  application:
-    name: spring-cloud-server
-  profiles:
-    active: native,single
+  application.name: spring-cloud-server
+  profiles.active: native,single
+  redis.host: 172.16.1.130
   cloud:
-    config:
-      server:
-        native:
-          # search-locations: file:G:\OneDrive\UserData\Codes\GitRepo\SpringCloudPractice\CloudServer\src\main\resources
-          search-locations: classpath:/
+    config.server:
+        native.search-locations: classpath:/
+        # search-locations: file:G:\OneDrive\UserData\Codes\GitRepo\SpringCloudPractice\CloudServer\src\main\resources
         prefix: /config # set the prefix of Config Server Rest API
     stream:
-      kafka:
-        binder:
-          brokers: 172.16.1.126,172.16.1.129
+      kafka.binder.brokers: 172.16.1.126,172.16.1.129
       bindings:
-        output:
-          destination: input
-        customOutChannel1:
-          destination: customInChannel1
+        output.destination: input
+        customOutChannel1.destination: customInChannel1
         customOutChannel2:
           destination: customInChannel2
           # content-type: application/json
           # group: test
-  redis:
-    host: 172.16.1.130
+  boot.admin.context-path: /admin-ui
 
 zuul:
   sensitiveHeaders: # keep all sensitive headers
-  routes:
-    spring-cloud-client:
-      path: /spring-cloud-client/**
-      # sensitiveHeaders: Cookie,Set-Cookie,Authorization
+  routes.spring-cloud-client.path: /spring-cloud-client/**
+  # sensitiveHeaders: Cookie,Set-Cookie,Authorization
 
 eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:10000/eureka/,http://localhost:10001/eureka/,http://localhost:10002/eureka/
+  client.service-url.defaultZone: http://localhost:10000/eureka,http://localhost:10001/eureka,http://localhost:10002/eureka
   instance:
     lease-renewal-interval-in-seconds: 5 # heartbeat inerval
     lease-expiration-duration-in-seconds: 15 # offline timeout
-
-
 
 lj:
   jar-path: G:\OneDrive\UserData\Codes\GitRepo\SpringCloudPractice\CloudServer\target\cloud-server-0.1.jar
@@ -50,3 +36,20 @@ lj:
     "[/10001]": test1
     "[/10002]": test2
   login-service-id: spring-cloud-client
+
+---
+spring.profiles: dev
+server.port: 10000
+
+---
+spring.profiles: single
+server.port: 10000
+eureka.client.service-url.defaultZone: http://localhost:10000/eureka
+
+---
+spring.profiles: test1
+server.port: 10001
+
+---
+spring.profiles: test2
+server.port: 10002

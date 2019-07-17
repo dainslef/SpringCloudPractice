@@ -4,6 +4,7 @@ import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.Output
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.SubscribableChannel
+import java.util.*
 
 interface Logger {
     val logger get() = org.slf4j.LoggerFactory.getLogger(javaClass)
@@ -36,4 +37,4 @@ interface CustomSinkSource {
 
 }
 
-data class CustomMessage(val index: Int = 0, val type: String = "", val content: String = "")
+data class CustomMessage<T>(val index: Int = 0, val type: Optional<String> = Optional.empty(), val content: T?)

@@ -44,6 +44,13 @@
             <artifactId>spring-cloud-config-monitor</artifactId>
         </dependency>
 
+        <!-- Admin -->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>

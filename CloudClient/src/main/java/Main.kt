@@ -30,6 +30,7 @@ class ConfigRefreshController : Logger {
     @Value("\${test.config}")
     private lateinit var config: String
 
+    // use the Environment to get config, you don't need to add @RefreshScope
     @Autowired
     private lateinit var environment: Environment
 
@@ -86,10 +87,16 @@ class MessageHandlers : Logger {
     @StreamListener(Sink.INPUT)
     fun receiveMessage(message: String) = logger.info("Receive message from ${Sink.INPUT}: $message")
 
-    @StreamListener(CustomSinkSource.inChannel1)
-    fun receiveMessage1(message: CustomMessage) = logger.info("Receive message from ${CustomSinkSource.inChannel1}: $message")
+    @StreamListener(CustomSinkSource.inChannel1, condition = "headers['type']=='number'")
+    fun receiveIntMessage1(message: CustomMessage<Int>) = logger.info("Receive message[int] from ${CustomSinkSource.inChannel1}: $message")
 
-    @StreamListener(CustomSinkSource.inChannel2)
-    fun receiveMessage2(message: CustomMessage) = logger.info("Receive message from ${CustomSinkSource.inChannel2}: $message")
+    @StreamListener(CustomSinkSource.inChannel1, condition = "headers['type']=='string'")
+    fun receiveStringMessage1(message: CustomMessage<String>) = logger.info("Receive message[string] from ${CustomSinkSource.inChannel1}: $message")
+
+    @StreamListener(CustomSinkSource.inChannel2, condition = "headers['type']=='number'")
+    fun receiveIntMessage2(message: CustomMessage<Int>) = logger.info("Receive message[int] from ${CustomSinkSource.inChannel2}: $message")
+
+    @StreamListener(CustomSinkSource.inChannel2, condition = "headers['type']=='string'")
+    fun receiveStringMessage2(message: CustomMessage<String>) = logger.info("Receive message[string] from ${CustomSinkSource.inChannel2}: $message")
 
 }

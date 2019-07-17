@@ -1,20 +1,14 @@
 spring:
-  application:
-    name: spring-cloud-client
-  profiles:
-    active: dev
-  cloud:
-    config:
-      # when use Eureka, you can use service-id to find Spring Cloud Server, instead of hard code in config file
-      discovery:
-        enabled: true # in order to use local config, you can disable the config discovery
-        service-id: spring-cloud-server
-        # uri: http://localhost:10000/
+  application.name: spring-cloud-client
+  profiles.active: dev
+  cloud.config.discovery:
+    # when use Eureka, you can use service-id to find Spring Cloud Server, instead of hard code in config file
+    enabled: true # in order to use local config, you can disable the config discovery
+    service-id: spring-cloud-server
+    # uri: http://localhost:10000/
 
 eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:10000/eureka/
+  client.service-url.defaultZone: http://localhost:10000/eureka
   instance:
     lease-renewal-interval-in-seconds: 5 # heartbeat inerval
     lease-expiration-duration-in-seconds: 15 # offline timeout

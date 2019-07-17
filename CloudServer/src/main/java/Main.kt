@@ -1,13 +1,10 @@
 package dainslef
 
-import java.net.ServerSocket
-import javax.ws.rs.core.MediaType
-import java.util.concurrent.atomic.AtomicInteger
-
 import com.netflix.appinfo.InstanceInfo
 import com.netflix.discovery.EurekaClient
 import com.netflix.zuul.ZuulFilter
 import com.netflix.zuul.context.RequestContext
+import de.codecentric.boot.admin.server.config.EnableAdminServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
@@ -20,15 +17,21 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer
 import org.springframework.cloud.netflix.eureka.server.event.*
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.PRE_TYPE
-import org.springframework.context.annotation.Configuration
-import org.springframework.web.bind.annotation.*
 import org.springframework.cloud.stream.annotation.EnableBinding
-import org.springframework.cloud.stream.messaging.Source
+import org.springframework.cloud.stream.messaging.Processor
 import org.springframework.context.ApplicationEvent
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.*
 import org.springframework.context.event.EventListener
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.support.GenericMessage
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
+import java.net.ServerSocket
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import javax.ws.rs.core.MediaType
 
 fun main(args: Array<String>) {
     SpringApplication.run(CloudServer::class.java, *args)
@@ -37,6 +40,7 @@ fun main(args: Array<String>) {
 @SpringBootApplication
 @EnableConfigServer
 @EnableEurekaServer
+@EnableAdminServer
 @EnableZuulProxy
 class CloudServer
 
@@ -58,13 +62,13 @@ class ClientInfoController : Logger {
 }
 
 @RestController
-@EnableBinding(Source::class, CustomSinkSource::class)
+@EnableBinding(Processor::class, CustomSinkSource::class)
 class MessageController : Logger {
 
     private val index = AtomicInteger()
 
     @Autowired
-    private lateinit var source: Source
+    private lateinit var source: Processor
 
     @Autowired
     private lateinit var customSinkSource: CustomSinkSource
@@ -75,9 +79,19 @@ class MessageController : Logger {
                     .apply(logger::info)
 
     @GetMapping("/send-custom-message")
-    fun testCustomMessage(@RequestParam message: String, @RequestParam channel: String, @RequestParam(required = false) type: String?): String {
-        val customMessage = CustomMessage(index.incrementAndGet(), type ?: "", message)
-        val send = { chann: MessageChannel -> chann.send(GenericMessage(customMessage)) }
+    fun testCustomMessage(@RequestParam message: String, @RequestParam channel: String,
+                          @RequestParam(required = false) type: String?): String {
+        val id = index.incrementAndGet()
+        val sendMessage = when (type) {
+            "text" -> CustomMessage(id, Optional.of(type), message)
+            "number" -> CustomMessage(id, Optional.of(type), message.toInt())
+            else -> CustomMessage(id, content = message)
+        }
+        val send = { chann: MessageChannel ->
+            chann.send(GenericMessage(sendMessage, mapOf(
+                    "type" to sendMessage.type.orElse("unknown")
+            )))
+        }
         val successful = when (channel) {
             CustomSinkSource.inChannel1 -> send(customSinkSource.input1())
             CustomSinkSource.inChannel2 -> send(customSinkSource.input2())
@@ -85,7 +99,7 @@ class MessageController : Logger {
             CustomSinkSource.outChannel2 -> send(customSinkSource.output2())
             else -> false
         }
-        return "Send message: $customMessage, channel: $channel, success: $successful".apply(logger::info)
+        return "Send message: $sendMessage, channel: $channel, success: $successful".apply(logger::info)
     }
 
 }
@@ -116,6 +130,19 @@ class CustomFilter : ZuulFilter(), Logger {
             }
         }
     }
+
+    /**
+     * Provide the CorsFilter bean to resolve the CORS problem
+     */
+    @Bean
+    fun corsFilter() = CorsFilter(UrlBasedCorsConfigurationSource().apply {
+        registerCorsConfiguration("/**", CorsConfiguration().apply {
+            allowCredentials = true
+            addAllowedOrigin("*")
+            addAllowedHeader("*")
+            addAllowedMethod("*")
+        })
+    })
 
 }
 
@@ -195,8 +222,11 @@ class EurekaEventHandler : Logger {
     }
 
     private inline fun <reified T : ApplicationEvent> wirteLogs(event: T, log: String = "...") =
-            listOf("${T::class.simpleName} begin >>>>>>>>>>", event.toString(),
-                    log, "${T::class.simpleName} end <<<<<<<<<<<<"
+            listOf(
+                    "${T::class.simpleName} begin >>>>>>>>>>",
+                    event.toString(),
+                    log,
+                    "${T::class.simpleName} end <<<<<<<<<<<<"
             ).forEach(logger::info)
 
     private fun checkPortCanUse(port: Int) = runCatching { ServerSocket(port).close() }.isSuccess

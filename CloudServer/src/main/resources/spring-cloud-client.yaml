@@ -1,14 +1,26 @@
 spring:
+  session.timeout: 999999
   cloud:
-    stream:
-      kafka:
-        binder:
-          brokers: 172.16.1.126,172.16.1.129
-    bus:
-      id: ${vcap.application.name:${spring.application.name:application}}:${vcap.application.instance_index:${spring.profiles.active:${local.server.port:${server.port:0}}}}:${vcap.application.instance_id:${random.value}}
-  redis:
-    host: 172.16.1.130
+    stream.kafka.binder.brokers: 172.16.1.126,172.16.1.129
+    bus.id: ${vcap.application.name:${spring.application.name:application}}:${vcap.application.instance_index:${spring.profiles.active:${local.server.port:${server.port:0}}}}:${vcap.application.instance_id:${random.value}}
+  redis.host: 172.16.1.130
   datasource:
-    url: jdbc:mysql://172.16.0.134:3306/common_config_wh
-    user: gsmrlab
+    url: jdbc:mysql://172.16.1.33:3306/common_config_wh
+    user: root
     password: gsmrlab
+
+management.endpoints.web.exposure.include: '*'
+
+test:
+  config: test-config-${spring.profiles.active}
+  name0: test-name-0
+  name1: test-name-1
+  name2: test-name-2
+
+---
+spring.profiles: dev
+server.port: 20000
+
+---
+spring.profiles: test
+server.port: 20001
